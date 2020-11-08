@@ -64,20 +64,28 @@ impl<'a> MyDbContext<'a>{
 
     }
 
+    pub fn read_gitignorefile(&mut self,key: &String) -> Result<Vec<String>>{
 
-}
+        let read_gitignorefile_string = format!("select value from {} where key = :key",&self.tablename);
 
-pub fn create_table(connection:& Connection,tablename:&str) -> Result<()>{
+        if let None = &self.read_gitignorefile_statement{
 
-    let create_table_string = format!("create table if not exists {} (
-        key text primary key,
-        value text not null unique
-    )",tablename);
+            let stmt = self.connection.prepare(&read_gitignorefile_string)?;
 
-    connection.execute(
-        &create_table_string,
-        NO_PARAMS,
-    )?;
+            self.read_gitignorefile_statement = Some(stmt);
+        }
 
-    return Ok(())
+        let mut values = Vec::new();
+
+        let rows = self.read_gitignorefile_statement.as_mut().unwrap().query_map_named(&[(":key",&key)],|row|{row.get(0)})?;
+
+        for row in rows{
+            values.push(row?);
+        }
+
+        return Ok(values);
+
+    }
+
+
 }
