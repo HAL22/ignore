@@ -1,4 +1,5 @@
 use rusqlite::{Connection, Result,Statement,NO_PARAMS};
+use std::collections::HashMap;
 
 pub struct MyDbContext<'a>{
     pub connection: &'a Connection,
@@ -83,3 +84,9 @@ impl<'a> MyDbContext<'a>{
     }
 
 }
+
+pub fn generate_gitignorefile(path:& String,map_of_gitignore_res:& HashMap<String,String>){
+
+}
+
+
