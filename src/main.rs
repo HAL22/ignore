@@ -1,5 +1,5 @@
 use rusqlite::{Connection, Result,NO_PARAMS};
-use ignore::{create_table};
+
 
 fn main() -> Result<(),()>{
     

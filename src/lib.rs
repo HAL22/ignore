@@ -57,7 +57,7 @@ impl<'a> MyDbContext<'a>{
         };
 
         self.create_gitignorefile_statement.as_mut().unwrap().execute_named(
-            &[(":key",&key),(":value",&value)]
+            &[(":key",key),(":value",value)]
         )?;
 
         return Ok(self.connection.last_insert_rowid());
@@ -77,13 +77,52 @@ impl<'a> MyDbContext<'a>{
 
         let mut values = Vec::new();
 
-        let rows = self.read_gitignorefile_statement.as_mut().unwrap().query_map_named(&[(":key",&key)],|row|{row.get(0)})?;
+        let rows = self.read_gitignorefile_statement.as_mut().unwrap().query_map_named(&[(":key",key)],|row|{row.get(0)})?;
 
         for row in rows{
             values.push(row?);
         }
 
         return Ok(values);
+
+    }
+
+    pub fn update_gitignorefile(& mut self,key: &String,new_value: &String) -> Result<()>{
+
+        let update_gitignorefile_string = format!("update {} set value = :value where key = :key",&self.tablename);
+
+        if let None = &self.update_gitignorefile_statement{
+
+            let stmt = self.connection.prepare(&update_gitignorefile_string)?;
+
+            self.update_gitignorefile_statement = Some(stmt);
+        }
+
+        self.update_gitignorefile_statement.as_mut().unwrap().execute_named(
+            &[(":key",key),(":value",new_value)]
+        )?;
+
+        return Ok(());
+
+    }
+
+    pub fn delete_gitignorefile(& mut self,key: &String) -> Result<()>{
+
+        let delete_gitignorefile_string = format!("delete from {} where key = :key",&self.tablename);
+
+        if let None = &self.delete_gitignorefile_statement{
+
+            let stmt = self.connection.prepare(& delete_gitignorefile_string)?;
+
+            self.delete_gitignorefile_statement = Some(stmt);
+
+        }
+
+        self.delete_gitignorefile_statement.as_mut().unwrap().execute_named(
+            &[(":key",key)]
+        )?;
+
+        return Ok(());
 
     }
 
