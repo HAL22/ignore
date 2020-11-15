@@ -1,4 +1,4 @@
-use rusqlite::{Connection, Result,Statement,NO_PARAMS};
+use rusqlite::{Connection, Result,Statement};
 
 pub struct MyDbContext<'a>{
     pub connection: &'a Connection,
