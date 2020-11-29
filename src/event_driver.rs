@@ -32,8 +32,27 @@ impl<'a> MyEventDriver <'a>{
         let result = self.filecontext.make_or_amend_gitignore_using_userinput(user_input);
     }
 
-    pub fn event_handler(mut args: env::Args){
+    pub fn event_handler(& mut self,mut args: env::Args,size:i32) -> Result<(),String>{
 
+        if size<2{
+            return Err(String::from("Not enough inputs"));
+        }else{
+
+            args.next();
+        }
+
+        let mut keys:Vec<String> = Vec::new();
+
+        for arg in args{
+
+            keys.push(arg);
+
+        }
+
+        self.generate_gitignore_db(&keys);
+
+        
+        return Ok(());
 
     }
 
