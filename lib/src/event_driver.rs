@@ -20,6 +20,7 @@ impl<'a> MyEventDriver <'a>{
         let mut files_holder :Vec<String> = Vec::new();
         self.dbcontext.connection.execute_batch("BEGIN TRANSACTION;")?;
         for key in keys{
+          //  println!("{:?}",key);
            let mut vec :Vec<String> =  self.dbcontext.read_gitignorefile(&key)?;
            files_holder.push(vec.remove(0));
         }
@@ -48,6 +49,8 @@ impl<'a> MyEventDriver <'a>{
             keys.push(arg);
 
         }
+
+        //println!("{:?}",keys);
 
         self.generate_gitignore_db(&keys);
 

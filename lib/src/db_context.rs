@@ -48,15 +48,19 @@ impl<'a> MyDbContext<'a>{
     }
 
     pub fn read_gitignorefile(&mut self,key: &String) -> Result<Vec<String>>{
-        if let None = &self.read_gitignorefile_statement{
-            let stmt = self.connection.prepare("select value from :table where key = :key")?;
+   
+        if let None = &self.read_gitignorefile_statement{  
+            let mut stmt = self.connection.prepare(&format!("SELECT value FROM {} WHERE key = :key",&self.tablename)[..])?;
             self.read_gitignorefile_statement = Some(stmt);
         }
+             
         let mut values = Vec::new();
-        let rows = self.read_gitignorefile_statement.as_mut().unwrap().query_map_named(&[(":table",&self.tablename),(":key",key)],|row|{row.get(0)})?;
+
+        let rows = self.read_gitignorefile_statement.as_mut().unwrap().query_map_named(&[(":key",&String::from(key))],|row|{row.get(0)})?;
+        
         for row in rows{
             values.push(row?);
-        }
+        }        
         return Ok(values);
     }
 

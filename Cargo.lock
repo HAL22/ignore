@@ -46,6 +46,14 @@ dependencies = [
 name = "ignore"
 version = "0.1.0"
 dependencies = [
+ "lib",
+ "rusqlite",
+]
+
+[[package]]
+name = "lib"
+version = "0.1.0"
+dependencies = [
  "rusqlite",
 ]
 
