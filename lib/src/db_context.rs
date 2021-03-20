@@ -38,11 +38,11 @@ impl<'a> MyDbContext<'a>{
 
     pub fn create_gitignorefile(&mut self,key: &String,value: &String) -> Result<i64>{
         if let None = &self.create_gitignorefile_statement{
-            let stmt = self.connection.prepare("insert into :table (key, value) values (:key, :value)")?;
+            let stmt = self.connection.prepare(&format!("INSERT INTO {} (key, value) values (:key, :value)",&self.tablename)[..])?;
             self.create_gitignorefile_statement = Some(stmt);
         };
         self.create_gitignorefile_statement.as_mut().unwrap().execute_named(
-            &[(":table",&self.tablename),(":key",key),(":value",value)]
+            &[(":key",key),(":value",value)]
         )?;
         return Ok(self.connection.last_insert_rowid());
     }
@@ -57,7 +57,7 @@ impl<'a> MyDbContext<'a>{
         let mut values = Vec::new();
 
         let rows = self.read_gitignorefile_statement.as_mut().unwrap().query_map_named(&[(":key",&String::from(key))],|row|{row.get(0)})?;
-        
+
         for row in rows{
             values.push(row?);
         }        
@@ -66,22 +66,22 @@ impl<'a> MyDbContext<'a>{
 
     pub fn update_gitignorefile(& mut self,key: &String,new_value: &String) -> Result<()>{
         if let None = &self.update_gitignorefile_statement{
-            let stmt = self.connection.prepare("update :table set value = :value where key = :key")?;
+            let stmt = self.connection.prepare(&format!("UPDATE {} SET value = :value where key = :key",&self.tablename)[..])?;
             self.update_gitignorefile_statement = Some(stmt);
         }
         self.update_gitignorefile_statement.as_mut().unwrap().execute_named(
-            &[(":table",&self.tablename),(":key",key),(":value",new_value)]
+            &[(":key",key),(":value",new_value)]
         )?;
         return Ok(());
     }
 
     pub fn delete_gitignorefile(& mut self,key: &String) -> Result<()>{
         if let None = &self.delete_gitignorefile_statement{
-            let stmt = self.connection.prepare("delete from :table where key = :key")?;
+            let stmt = self.connection.prepare(&format!("DELETE FROM {} WHERE key = :key",&self.tablename)[..])?;
             self.delete_gitignorefile_statement = Some(stmt);
         }
         self.delete_gitignorefile_statement.as_mut().unwrap().execute_named(
-            &[(":table",&self.tablename),(":key",key)]
+            &[(":key",key)]
         )?;
         return Ok(());
     }
