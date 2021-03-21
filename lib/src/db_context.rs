@@ -38,11 +38,11 @@ impl<'a> MyDbContext<'a>{
 
     pub fn create_gitignorefile(&mut self,key: &String,value: &String) -> Result<i64>{
         if let None = &self.create_gitignorefile_statement{
-            let stmt = self.connection.prepare(&format!("INSERT INTO {} (key, value) values (:key, :value)",&self.tablename)[..])?;
+            let stmt = self.connection.prepare(&format!("INSERT INTO {} (key, value) values (?1, ?2)",&self.tablename)[..])?;
             self.create_gitignorefile_statement = Some(stmt);
-        };
-        self.create_gitignorefile_statement.as_mut().unwrap().execute_named(
-            &[(":key",key),(":value",value)]
+        };     
+        self.create_gitignorefile_statement.as_mut().unwrap().execute(
+            &[key,value]
         )?;
         return Ok(self.connection.last_insert_rowid());
     }
