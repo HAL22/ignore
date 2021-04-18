@@ -5,6 +5,12 @@ use std::fs::OpenOptions;
 
 use lib::event_driver;
 
+fn input_checker_create_ignore_file(conn: & Connection,keys: & Vec<String>,file_path: & String){
+
+
+
+}
+
 fn main() -> Result<()>{
 
     let args: Vec<String> = env::args().collect();
@@ -19,25 +25,11 @@ fn main() -> Result<()>{
                     Result::Err(e) => {panic!()}
         };
         let conn = Connection::open(&_databasename)?;
-    
+
         let mut event = lib::event_driver::MyEventDriver::new(&conn,_tablename.to_string(),File);
 
         event.event_handler(env::args(), 3);
     }
-    
-
-
-    
-
-    
-
-    
-
-
-
-
-
-
 
     Ok(())
 }

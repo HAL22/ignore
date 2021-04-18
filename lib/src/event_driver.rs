@@ -29,10 +29,22 @@ impl<'a> MyEventDriver <'a>{
     }
 
     pub fn create_new_gitignore(& mut self,key:&String,value:&String) -> Result<()>{
-        println!("here");
         self.dbcontext.connection.execute_batch("BEGIN TRANSACTION;")?;
-
         let row = self.dbcontext.create_gitignorefile(key,value)?;
+        self.dbcontext.connection.execute_batch("COMMIT TRANSACTION;")?;
+        return Ok(());
+    }
+
+    pub fn update_gitignore(& mut self,key:&String,value:&String) -> Result<()>{
+        self.dbcontext.connection.execute_batch("BEGIN TRANSACTION;")?;
+        self.dbcontext.update_gitignorefile(key,value)?;
+        self.dbcontext.connection.execute_batch("COMMIT TRANSACTION;")?;
+        return Ok(());
+    }
+
+    pub fn delete_gitignore(& mut self,key:&String) -> Result<()>{
+        self.dbcontext.connection.execute_batch("BEGIN TRANSACTION;")?; 
+        self.dbcontext.delete_gitignorefile(key)?;      
         self.dbcontext.connection.execute_batch("COMMIT TRANSACTION;")?;
         return Ok(());
     }
@@ -43,29 +55,31 @@ impl<'a> MyEventDriver <'a>{
 
 
 
-
+    //To be removed
     pub fn event_handler(& mut self,mut args: env::Args,size:i32) -> Result<(),String>{
 
-     //   if size<2{
-      //      return Err(String::from("Not enough inputs"));
-     //   }else{
+       if size<2{
+            return Err(String::from("Not enough inputs"));
+        }else{
 
-    //        args.next();
-    //    }
+            args.next();
+       }
 
-    //    let mut keys:Vec<String> = Vec::new();
+        let mut keys:Vec<String> = Vec::new();
 
-    //    for arg in args{
+      for arg in args{
 
-    //        keys.push(arg);
+           keys.push(arg);
 
-     //   }
+        }
 
-        //println!("{:?}",keys);
+        println!("{:?}",keys);
 
-       // self.generate_gitignore_db(&keys);
+       let c  =  self.generate_gitignore_db(&keys);
 
-       let r = self.create_new_gitignore(&String::from("gomaven"),&String::from("/Users/thethelafaltein/Desktop/Projects/rustlangproj/ignore/lable"));
+       println!("{:?}",c);
+
+      // let r = self.create_new_gitignore(&String::from("gomaven"),&String::from("/Users/thethelafaltein/Desktop/Projects/rustlangproj/ignore/lable"));
 
 
 
